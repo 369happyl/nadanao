@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Placar Eleitoral — PT × PL</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121d2e;--panel2:#18263a;--text:#eef4ff;--muted:#9eb0c8;--line:#293950;--pt:#e63946;--pl:#2878e5;--neutral:#526176;--good:#8ee3b0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172944 0,#0b1220 58%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+main{width:min(1180px,100%);margin:auto;padding:24px 16px 48px}
+header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:22px}
+.eyebrow{color:#a8c4ed;text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:800}
+h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.05;margin:8px 0 10px;letter-spacing:-.04em}
+p{margin:0;color:var(--muted)}.status{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#111d2e;border-radius:999px;padding:8px 12px;color:var(--muted);font-size:.82rem}
+.dot{width:8px;height:8px;border-radius:50%;background:#f3c969;box-shadow:0 0 12px #f3c96977}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.panel{background:linear-gradient(160deg,#142137,#101a2a);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 34px #0002;min-width:0}
+.national{grid-column:span 12}.map-panel{grid-column:span 7}.side{grid-column:span 5}
+.panel-title{font-size:1.02rem;font-weight:800;margin:0 0 4px}.sub{font-size:.84rem;color:var(--muted);margin-bottom:16px}
+.score{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin:20px 0}
+.candidate{padding:18px;border-radius:16px;background:#18263a;border:1px solid var(--line);min-width:0}
+.candidate.pt{border-top:4px solid var(--pt)}.candidate.pl{border-top:4px solid var(--pl);text-align:right}
+.party{font-size:.75rem;font-weight:900;letter-spacing:.1em}.pt .party,.pt-color{color:#ff7d87}.pl .party,.pl-color{color:#79b3ff}
+.candidate h2{font-size:clamp(1.15rem,3vw,1.8rem);margin:6px 0 2px;overflow-wrap:anywhere}.votes{font-size:clamp(1.35rem,3vw,2.1rem);font-weight:850;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.pct{color:var(--muted);font-size:.9rem}
+.versus{font-weight:900;color:#73849c;font-size:.78rem;letter-spacing:.1em}
+.bar{height:12px;background:#26344a;border-radius:99px;overflow:hidden;display:flex;margin:12px 0 8px}.bar .ptbar{background:var(--pt);width:50%;transition:width .4s}.bar .plbar{background:var(--pl);width:50%;transition:width .4s}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:.82rem}
+.map{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;margin-top:18px}
+.state{border:1px solid #ffffff24;border-radius:9px;min-height:58px;padding:7px 4px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;background:var(--neutral);cursor:pointer;color:white;transition:transform .15s,filter .15s;min-width:0}
+.state:hover,.state:focus-visible{transform:translateY(-2px);filter:brightness(1.18);outline:2px solid white;outline-offset:2px}
+.state.ptwin{background:linear-gradient(145deg,#bd2637,#e63946)}.state.plwin{background:linear-gradient(145deg,#1856aa,#2878e5)}.state.pending{background:#34445a}
+.state strong{font-size:1rem;line-height:1.1}.state small{font-size:.65rem;font-weight:800;opacity:.95}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:.8rem}.legend span{display:flex;gap:7px;align-items:center}.swatch{width:10px;height:10px;border-radius:3px}
+.state-detail{margin-top:18px;background:#0d1727;border:1px solid var(--line);border-radius:14px;padding:14px}.state-detail h3{margin:0 0 6px;font-size:1rem}.detail-line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;color:var(--muted);border-bottom:1px solid #ffffff0c}.detail-line:last-child{border:0}.detail-line b{color:var(--text);font-variant-numeric:tabular-nums}
+.leader-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}.leader-row{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;background:#18263a;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.uf{font-weight:900;font-size:.85rem;color:#dbe8fa}.leader-name{font-weight:750}.leader-votes{font-variant-numeric:tabular-nums;text-align:right;font-size:.9rem}.leader-votes small{display:block;color:var(--muted);font-size:.75rem}
+button{font:inherit;color:var(--text);background:#20324b;border:1px solid #344965;border-radius:10px;padding:9px 12px;cursor:pointer}button:hover{background:#2a4160}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.note{font-size:.78rem;color:var(--muted);margin-top:14px}.error{color:#ffd18a}.foot{margin-top:18px;text-align:center;font-size:.76rem;color:#7f91aa}.foot a{color:#9ec5ff}
+@media(max-width:760px){.map-panel,.side{grid-column:span 12}.panel{padding:16px}.map{grid-template-columns:repeat(6,minmax(0,1fr))}.state{min-height:53px}.score{gap:7px}.candidate{padding:12px}.national{padding:16px}}
+@media(max-width:390px){.map{grid-template-columns:repeat(5,minmax(0,1fr))}.score{grid-template-columns:1fr 24px 1fr}.candidate h2{font-size:1.05rem}.votes{font-size:1.25rem}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div><div class="eyebrow">Painel independente · dados públicos</div><h1>PT <span style="color:#93a9c5">×</span> PL</h1><p>Apuração presidencial · 2º turno de 2026</p></div>
+ <div class="actions"><div class="status" id="status"><span class="dot"></span><span>Conectando ao TSE…</span></div><button id="refresh">↻ Atualizar</button></div>
+</header>
+
+<div class="grid">
+ <section class="panel national">
+  <h2 class="panel-title">Placar nacional</h2><div class="sub">Quem está à frente nos votos válidos apurados no Brasil.</div>
+  <div class="score">
+   <div class="candidate pt"><div class="party">PT · 13</div><h2 id="pt-name">Lula</h2><div class="votes" id="pt-votes">—</div><div class="pct" id="pt-pct">—</div></div>
+   <div class="versus">VS</div>
+   <div class="candidate pl"><div class="party">PL · 22</div><h2 id="pl-name">Flávio Bolsonaro</h2><div class="votes" id="pl-votes">—</div><div class="pct" id="pl-pct">—</div></div>
+  </div>
+  <div class="bar"><div class="ptbar" id="ptbar"></div><div class="plbar" id="plbar"></div></div>
+  <div class="meta"><span id="lead">Aguardando os dados oficiais…</span><span id="valid-votes">Votos válidos: —</span><span id="counted">Seções apuradas: —</span></div>
+ </section>
+
+ <section class="panel map-panel">
+  <h2 class="panel-title">Mapa dos estados</h2><div class="sub">Cada bloco representa uma unidade da Federação. A cor indica quem está à frente naquele estado.</div>
+  <div class="map" id="map" aria-label="Mapa em blocos dos estados brasileiros"></div>
+  <div class="legend"><span><i class="swatch" style="background:var(--pt)"></i>PT na frente</span><span><i class="swatch" style="background:var(--pl)"></i>PL na frente</span><span><i class="swatch" style="background:var(--neutral)"></i>Sem dados/empate</span></div>
+  <div class="state-detail" id="state-detail"><h3>Escolha um estado</h3><p>Toque em qualquer sigla para ver os números disponíveis.</p></div>
+  <p class="note">Este é um mapa esquemático em blocos, não um mapa geográfico. Estados sem dados carregados ficam em cinza.</p>
+ </section>
+
+ <section class="panel side">
+  <h2 class="panel-title">Placar por estado</h2><div class="sub">Estados em que a liderança foi identificada nos dados carregados.</div>
+  <div class="leader-list" id="leaders"><p>Carregando resultados estaduais…</p></div>
+  <p class="note" id="state-status">Consultando arquivos estaduais do TSE.</p>
+ </section>
+</div>
+<div class="foot">Fonte: <a href="https://resultados.tse.jus.br/" target="_blank" rel="noopener">Resultados oficiais do TSE</a> · Os dados podem mudar durante a apuração. Este painel não é um produto oficial do TSE.</div>
+</main>
+<script>
+(() => {
+ const BASE = "https://resultados.tse.jus.br/oficial/ele2026/6258/dados/";
+ const NATIONAL = BASE + "br/br-c0001-e006258-u.json";
+ const states = [
+  ["AC","Acre"],["AL","Alagoas"],["AP","Amapá"],["AM","Amazonas"],["BA","Bahia"],["CE","Ceará"],["DF","Distrito Federal"],["ES","Espírito Santo"],["GO","Goiás"],["MA","Maranhão"],["MT","Mato Grosso"],["MS","Mato Grosso do Sul"],["MG","Minas Gerais"],["PA","Pará"],["PB","Paraíba"],["PR","Paraná"],["PE","Pernambuco"],["PI","Piauí"],["RJ","Rio de Janeiro"],["RN","Rio Grande do Norte"],["RS","Rio Grande do Sul"],["RO","Rondônia"],["RR","Roraima"],["SC","Santa Catarina"],["SP","São Paulo"],["SE","Sergipe"],["TO","Tocantins"]
+ ];
+ // Grid positions are arranged loosely to resemble Brazil's broad north-to-south shape.
+ const positions = {
+  AC:[1,1],AM:[2,2],RR:[3,1],AP:[4,1],PA:[4,2],RO:[2,3],MT:[3,4],TO:[4,3],MA:[5,3],PI:[6,3],CE:[7,2],RN:[8,2],PB:[8,3],PE:[7,4],AL:[8,4],SE:[8,5],BA:[6,5],GO:[4,5],DF:[5,5],MS:[3,6],MG:[5,6],ES:[7,6],RJ:[6,7],SP:[5,7],PR:[4,8],SC:[4,9],RS:[3,10]
+ };
+ const byUf = new Map();
+ const $ = id => document.getElementById(id);
+ const fmt = n => Number(n || 0).toLocaleString("pt-BR");
+ const pctFmt = n => `${(Number(n)||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+ const toNum = x => {
+   if (typeof x === "number") return x;
+   if (x == null) return 0;
+   const s = String(x).trim();
+   if (s.includes(",")) return Number(s.replace(/\./g,"").replace(",", ".")) || 0;
+   return Number(s) || 0;
+ };
+ function findCandidates(data) {
+   const found = {pt:null,pl:null};
+   const seen = new Set();
+   function walk(x) {
+     if (!x || typeof x !== "object" || seen.has(x)) return;
+     seen.add(x);
+     if (Array.isArray(x)) { x.forEach(walk); return; }
+     const nm = String(x.nm || "").toUpperCase();
+     const nmu = String(x.nmu || "").toUpperCase();
+     const num = String(x.n || "");
+     const votes = x.vap ?? x.votos ?? x.tvtn;
+     if (votes !== undefined) {
+       if (num === "13" || nm.includes("LUIZ INÁCIO LULA") || nmu === "LULA") {
+         if (nm.includes("LUIZ INÁCIO LULA") || nmu === "LULA" || !found.pt) found.pt = {votes:toNum(votes), pct:toNum(x.pvap), name:x.nmu || "Lula"};
+       }
+       if (num === "22" || nm.includes("FLAVIO") || nmu.includes("FLAVIO")) {
+         if (nm.includes("FLAVIO") || nmu.includes("FLAVIO") || !found.pl) found.pl = {votes:toNum(votes), pct:toNum(x.pvap), name:x.nmu || "Flávio Bolsonaro"};
+       }
+     }
+     Object.values(x).forEach(walk);
+   }
+   walk(data);
+   return found;
+ }
+ function findByName(data, type) {
+   const all=[];
+   const seen=new Set();
+   function walk(x){
+     if(!x||typeof x!=="object"||seen.has(x))return;seen.add(x);
+     if(Array.isArray(x)){x.forEach(walk);return}
+     const nm=String(x.nm||"").toUpperCase(), nmu=String(x.nmu||"").toUpperCase();
+     const isPT=nm.includes("LUIZ INÁCIO LULA")||nmu==="LULA";
+     const isPL=nm.includes("FLAVIO")||nmu.includes("FLAVIO");
+     if((type==="pt"?isPT:isPL)&&(x.vap!==undefined||x.pvap!==undefined))all.push(x);
+     Object.values(x).forEach(walk);
+   }
+   walk(data);
+   return all[0]||null;
+ }
+ function extract(data) {
+   const pt=findByName(data,"pt"), pl=findByName(data,"pl");
+   return {
+    pt:pt?{votes:toNum(pt.vap),pct:toNum(pt.pvap),name:pt.nmu||"Lula"}:null,
+    pl:pl?{votes:toNum(pl.vap),pct:toNum(pl.pvap),name:pl.nmu||"Flávio Bolsonaro"}:null,
+    raw:data
+   };
+ }
+ function candidateArrays(data) {
+   const out={pt:null,pl:null},seen=new Set();
+   function walk(x){
+    if(!x||typeof x!=="object"||seen.has(x))return;seen.add(x);
+    if(Array.isArray(x)){x.forEach(walk);return}
+    const nm=String(x.nm||"").toUpperCase(), nmu=String(x.nmu||"").toUpperCase();
+    if((nm.includes("LUIZ INÁCIO LULA")||nmu==="LULA")&&x.vap!==undefined)out.pt=x;
+    if((nm.includes("FLAVIO")||nmu.includes("FLAVIO"))&&x.vap!==undefined)out.pl=x;
+    Object.values(x).forEach(walk);
+   }walk(data);return out;
+ }
+ function candidateFrom(data, key) {
+   const c=candidateArrays(data)[key];
+   return c?{votes:toNum(c.vap),pct:toNum(c.pvap),name:c.nmu|| (key==="pt"?"Lula":"Flávio Bolsonaro")}:null;
+ }
+ function parse(data){
+   return {pt:candidateFrom(data,"pt"),pl:candidateFrom(data,"pl"),raw:data};
+ }
+ function renderNational(result,data){
+   if(!result.pt||!result.pl) throw new Error("O formato dos candidatos não foi reconhecido.");
+   $("pt-name").textContent=result.pt.name;
+   $("pl-name").textContent=result.pl.name;
+   $("pt-votes").textContent=fmt(result.pt.votes);
+   $("pl-votes").textContent=fmt(result.pl.votes);
+   $("pt-pct").textContent=pctFmt(result.pt.pct);
+   $("pl-pct").textContent=pctFmt(result.pl.pct);
+   const sum=result.pt.pct+result.pl.pct || 100;
+   $("ptbar").style.width=(result.pt.pct/sum*100)+"%";
+   $("plbar").style.width=(result.pl.pct/sum*100)+"%";
+   const lead=result.pt.votes===result.pl.votes?"Empate neste momento":result.pt.votes>result.pl.votes?`${result.pt.name} (PT) está à frente`:`${result.pl.name} (PL) está à frente`;
+   $("lead").textContent=lead;
+   const s=data.s||{};
+   $("valid-votes").textContent="Votos válidos: "+fmt((data.v||{}).vvc);
+   $("counted").textContent=`Seções apuradas: ${fmt(s.sa)} / ${fmt(s.ts)} (${s.psa||"—"}%)`;
+ }
+ function renderMap(){
+   const map=$("map");map.innerHTML="";
+   states.forEach(([uf,name])=>{
+     const b=document.createElement("button");b.className="state pending";b.id="state-"+uf;
+     const pos=positions[uf];if(pos){b.style.gridColumn=pos[0];b.style.gridRow=pos[1]}
+     b.innerHTML=`<strong>${uf}</strong><small>—</small>`;
+     b.title=name+" — aguardando dados";
+     b.setAttribute("aria-label",name+", resultado ainda indisponível");
+     b.addEventListener("click",()=>showState(uf));
+     map.appendChild(b);
+   });
+ }
+ function showState(uf){
+   const item=byUf.get(uf),name=states.find(s=>s[0]===uf)?.[1]||uf;
+   const el=$("state-detail");
+   if(!item||!item.pt||!item.pl){el.innerHTML=`<h3>${name} (${uf})</h3><p>Não foi possível carregar um resultado estadual para esta UF. Isso pode acontecer quando o arquivo não está disponível ou ainda não foi atualizado.</p>`;return}
+   const leader=item.pt.votes===item.pl.votes?"Empate":item.pt.votes>item.pl.votes?"PT está à frente":"PL está à frente";
+   el.innerHTML=`<h3>${name} (${uf}) · ${leader}</h3>
+    <div class="detail-line"><span class="pt-color">PT · ${escapeHtml(item.pt.name)}</span><b>${fmt(item.pt.votes)} (${pctFmt(item.pt.pct)})</b></div>
+    <div class="detail-line"><span class="pl-color">PL · ${escapeHtml(item.pl.name)}</span><b>${fmt(item.pl.votes)} (${pctFmt(item.pl.pct)})</b></div>`;
+ }
+ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+ function renderState(uf){
+   const item=byUf.get(uf),b=$("state-"+uf);
+   if(!b)return;
+   if(!item||!item.pt||!item.pl){b.className="state pending";b.querySelector("small").textContent="—";b.title=states.find(s=>s[0]===uf)[1]+" — sem dados";return}
+   const win=item.pt.votes===item.pl.votes?"tie":item.pt.votes>item.pl.votes?"ptwin":"plwin";
+   b.className="state "+(win==="tie"?"pending":win);
+   b.querySelector("small").textContent=win==="ptwin"?"PT":win==="plwin"?"PL":"EMP.";
+   b.title=`${states.find(s=>s[0]===uf)[1]}: PT ${fmt(item.pt.votes)} (${pctFmt(item.pt.pct)}) · PL ${fmt(item.pl.votes)} (${pctFmt(item.pl.pct)})`;
+   b.setAttribute("aria-label",b.title);
+ }
+ function renderLeaders(){
+   const known=states.filter(([uf])=>{const d=byUf.get(uf);return d&&d.pt&&d.pl;});
+   known.sort((a,b)=>{
+    const x=byUf.get(a[0]),y=byUf.get(b[0]);
+    return Math.abs(y.pt.votes-y.pl.votes)-Math.abs(x.pt.votes-x.pl.votes);
+   });
+   $("leaders").innerHTML=known.length?known.map(([uf,name])=>{
+    const d=byUf.get(uf),pt=d.pt.votes>=d.pl.votes,party=d.pt.votes===d.pl.votes?"EMP.":pt?"PT":"PL";
+    const votes=pt?d.pt.votes:d.pl.votes,pct=pt?d.pt.pct:d.pl.pct;
+    return `<div class="leader-row"><div class="uf">${uf}</div><div><div class="leader-name">${escapeHtml(name)}</div><div class="${party==="PT"?"pt-color":party==="PL"?"pl-color":""}">${party} na frente</div></div><div class="leader-votes">${fmt(votes)}<small>${pctFmt(pct)}</small></div></div>`;
+   }).join(""):"<p>Nenhum resultado estadual disponível ainda.</p>";
+   const p=known.filter(([uf])=>byUf.get(uf).pt.votes>byUf.get(uf).pl.votes).length;
+   const l=known.filter(([uf])=>byUf.get(uf).pl.votes>byUf.get(uf).pt.votes).length;
+   $("state-status").textContent=`Estados com dados: ${known.length}/27 · PT lidera em ${p} · PL lidera em ${l}.`;
+ }
+ async function load(){
+   const status=$("status");status.innerHTML='<span class="dot"></span><span>Atualizando…</span>';
+   $("refresh").disabled=true;
+   try{
+     const res=await fetch(NATIONAL,{cache:"no-store"});
+     if(!res.ok)throw new Error("HTTP "+res.status);
+     const data=await res.json();
+     renderNational(parse(data),data);
+   }catch(e){
+     $("lead").textContent="Não foi possível carregar o placar nacional.";
+     $("valid-votes").textContent="Verifique sua conexão ou tente abrir pelo servidor local.";
+     console.warn("Falha no arquivo nacional do TSE:",e);
+   }
+   let success=0;
+   // Small delay between requests avoids hammering the TSE's public service.
+   for(let i=0;i<states.length;i++){
+     const [uf]=states[i];
+     try{
+       const r=await fetch(`${BASE}${uf.toLowerCase()}/${uf.toLowerCase()}-c0001-e006258-u.json`,{cache:"no-store"});
+       if(!r.ok)throw new Error("HTTP "+r.status);
+       const data=await r.json(),d=parse(data);
+       if(d.pt&&d.pl){byUf.set(uf,d);success++;}
+     }catch(e){console.debug("UF indisponível:",uf,e.message)}
+     renderState(uf);
+     if(i<states.length-1) await new Promise(resolve=>setTimeout(resolve,120));
+   }
+   renderLeaders();
+   const now=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+   status.innerHTML=`<span class="dot" style="background:#8ee3b0;box-shadow:0 0 12px #8ee3b077"></span><span>Última tentativa: ${now}</span>`;
+   if(success===0)$("state-status").textContent="Os arquivos estaduais não responderam ou não estão disponíveis neste formato. O placar nacional pode continuar funcionando.";
+   $("refresh").disabled=false;
+ }
+ renderMap();
+ $("refresh").addEventListener("click",load);
+ load();
+ setInterval(load,60000);
+})();
+</script>
+</body>
+</html>
